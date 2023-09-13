@@ -1,11 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>Tic Tac Toe</title>
+  </head>
+  <body>
+    <aside>
+      <form>
+        <h1>Game Config</h1>
+        <input type="text" class="coolInput" maxlength="8" />
+        <input type="text" class="coolInput" maxlength="8" />
+        <div id="signSelectionContainer">
+          <button id="x">
+            <span class="material-symbols-rounded"> close </span>
+          </button>
+          <button id="o">
+            <span class="material-symbols-rounded"> circle </span>
+          </button>
+        </div>
+        <div id="botCheckbox">
+          <input type="checkbox" name="vsBot" id="vsBot" />
+          <label for="vsBot">Vs Bot?</label>
+        </div>
+
+        <div id="botDeffContainer">
+          <label for="botDeff">Bot difficulty</label>
+          <select name="botDeff" id="botDeff">
+            <option value="normal" selected>Normal</option>
+            <option value="impossible">Impossible</option>
+          </select>
+        </div>
+        <button id="reset">reset</button>
+      </form>
+    </aside>
+    <main></main>
+  </body>
+  <script src="app.js"></script>
 </html>
