@@ -45,10 +45,56 @@ form {
   flex-direction: column;
   justify-content: space-evenly;
   padding: 1rem;
+  border-radius: 7px;
+}
+form * {
+  background-color: var(--side-bar-background);
 }
 
 form h1 {
   text-align: center;
+}
+
+.coolLabel {
+  position: relative;
+  height: 8%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.coolInput {
+  width: 100%;
+  height: 80%;
+  border: 3px solid var(--input);
+  border-radius: 6px;
+  padding-left: 0.4rem;
+}
+
+.coolInput:focus {
+  outline: none;
+}
+
+.coolEffect {
+  color: var(--input-text);
+  position: absolute;
+  display: block;
+  top: 38%;
+  left: 0.4rem;
+  width: 54%;
+  text-align: center;
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.6s;
+  border-radius: 7px;
+  font-size: 16px;
+}
+
+.coolInput:not(:placeholder-shown) ~ .coolEffect,
+.coolInput:focus ~ .coolEffect {
+  top: 0;
+  border: none;
+  color: var(--input);
+  font-size: 14px;
+  width: 48%;
 }
 
 main {

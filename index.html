@@ -20,8 +20,26 @@
     <aside>
       <form>
         <h1>Game Config</h1>
-        <input type="text" class="coolInput" maxlength="8" />
-        <input type="text" class="coolInput" maxlength="8" />
+        <label for="player1" class="coolLabel">
+          <input
+            type="text"
+            name="player1"
+            class="coolInput"
+            maxlength="8"
+            placeholder="&nbsp;"
+          />
+          <span class="coolEffect">Player 1 Name</span>
+        </label>
+        <label for="player2" class="coolLabel">
+          <input
+            type="text"
+            name="player2"
+            class="coolInput"
+            maxlength="8"
+            placeholder="&nbsp;"
+          />
+          <span class="coolEffect">Player 2 Name</span>
+        </label>
         <div id="signSelectionContainer">
           <button id="x">
             <span class="material-symbols-rounded"> close </span>
@@ -31,17 +49,16 @@
           </button>
         </div>
         <div id="botCheckbox">
-          <input type="checkbox" name="vsBot" id="vsBot" />
+          <input type="checkbox" name="vsBot" id="vsBot" checked />
           <label for="vsBot">Vs Bot?</label>
         </div>
 
-        <div id="botDeffContainer">
-          <label for="botDeff">Bot difficulty</label>
-          <select name="botDeff" id="botDeff">
-            <option value="normal" selected>Normal</option>
-            <option value="impossible">Impossible</option>
-          </select>
-        </div>
+        <select name="botDeff" id="botDeff">
+          <option value="placeholder" selected>Bot difficulty</option>
+          <option value="normal">Normal (default)</option>
+          <option value="impossible">Impossible</option>
+        </select>
+
         <button id="reset">reset</button>
       </form>
     </aside>
