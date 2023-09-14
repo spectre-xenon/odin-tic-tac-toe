@@ -1,65 +1,92 @@
-(function game() {
-  this.board = ["", "", "", "", "", "", "", "", ""];
+const player = (theName, theSign) => {
+  let name = theName;
+  let sign = theSign;
 
-  this.init = () => {
+  const setName = (newName) => {
+    name = newName;
+  };
+
+  const setSign = (newSign) => {
+    sign = newSign;
+  };
+
+  const getSign = () => {
+    return sign;
+  };
+
+  return { setName, setSign, getSign };
+};
+
+const game = (() => {
+  const board = ["", "", "", "", "", "", "", "", ""];
+
+  let gameWon = false;
+  let player1Turn = true;
+
+  // Cache DOM
+  const one = document.getElementById("one");
+  const two = document.getElementById("two");
+  const three = document.getElementById("three");
+  const four = document.getElementById("four");
+  const five = document.getElementById("five");
+  const six = document.getElementById("six");
+  const seven = document.getElementById("seven");
+  const eight = document.getElementById("eight");
+  const nine = document.getElementById("nine");
+
+  const init = () => {
     bindEvents();
   };
 
-  this.bindEvents = () => {
-    const one = document
-      .getElementById("one")
-      .addEventListener("click", handleClick);
-    const two = document
-      .getElementById("two")
-      .addEventListener("click", handleClick);
-    const three = document
-      .getElementById("three")
-      .addEventListener("click", handleClick);
-    const four = document
-      .getElementById("four")
-      .addEventListener("click", handleClick);
-    const five = document
-      .getElementById("five")
-      .addEventListener("click", handleClick);
-    const six = document
-      .getElementById("six")
-      .addEventListener("click", handleClick);
-    const seven = document
-      .getElementById("seven")
-      .addEventListener("click", handleClick);
-    const eight = document
-      .getElementById("eight")
-      .addEventListener("click", handleClick);
-    const nine = document
-      .getElementById("nine")
-      .addEventListener("click", handleClick);
+  const bindEvents = () => {
+    one.addEventListener("click", playTurn);
+    two.addEventListener("click", playTurn);
+    three.addEventListener("click", playTurn);
+    four.addEventListener("click", playTurn);
+    five.addEventListener("click", playTurn);
+    six.addEventListener("click", playTurn);
+    seven.addEventListener("click", playTurn);
+    eight.addEventListener("click", playTurn);
+    nine.addEventListener("click", playTurn);
   };
 
-  this.handleClick = (event) => {
+  const removeEvents = () => {
+    one.removeEventListener("click", playTurn);
+    two.removeEventListener("click", playTurn);
+    three.removeEventListener("click", playTurn);
+    four.removeEventListener("click", playTurn);
+    five.removeEventListener("click", playTurn);
+    six.removeEventListener("click", playTurn);
+    seven.removeEventListener("click", playTurn);
+    eight.removeEventListener("click", playTurn);
+    nine.removeEventListener("click", playTurn);
+  };
+
+  const playTurn = (event) => {
     let element = event.target;
     let index = getIndex(element);
 
-    if (element.innerText === "") {
-      addToBoard("close", index);
-      element.appendChild(createSign("close"));
+    if (player1Turn) {
+      sign = gameHandler.playerOne.getSign();
+      player1Turn = false;
+    } else if (!gameHandler.getCheckboxState()) {
+      sign = gameHandler.playerTwo.getSign();
+      player1Turn = true;
     }
 
-    checkBoard("close");
+    if (element.innerText === "") {
+      addToBoard(sign, index);
+      element.appendChild(renderSign(sign));
+
+      if (gameHandler.getCheckboxState()) {
+        getBotChoice(element);
+      }
+    }
+
+    checkBoard(sign);
   };
 
-  this.createSign = (sign) => {
-    const span = document.createElement("span");
-    span.classList.add("material-symbols-rounded");
-    span.innerText = sign;
-    return span;
-  };
-
-  this.addToBoard = (sign, index) => {
-    if (sign === "close") board[index] = "x";
-    if (sign === "circle") board[index] = "o";
-  };
-
-  this.getIndex = (element) => {
+  const getIndex = (element) => {
     let index = 0;
     if (element.id === "one") index = 0;
     if (element.id === "two") index = 1;
@@ -73,7 +100,23 @@
     return index;
   };
 
-  this.checkBoard = (sign) => {
+  const addToBoard = (sign, index) => {
+    board[index] = sign;
+  };
+
+  const renderSign = (sign) => {
+    const span = document.createElement("span");
+    span.classList.add("material-symbols-rounded");
+    if (sign === "x") {
+      span.innerText = "close";
+    } else {
+      span.innerText = "circle";
+    }
+
+    return span;
+  };
+
+  const checkBoard = (sign) => {
     let winCombinations = [
       [0, 1, 2],
       [3, 4, 5],
@@ -95,39 +138,182 @@
         board[index2] === sign &&
         board[index3] === sign
       ) {
+        removeEvents();
         console.log(`${sign} wins!`);
+        gameWon = true;
+        return;
       }
     });
+
+    let boardEmptySpaces = 0;
+    board.forEach((space) => {
+      if (space === "") {
+        boardEmptySpaces++;
+      }
+    });
+
+    if (boardEmptySpaces === 0 && !gameWon) {
+      removeEvents();
+      console.log("it's a draw!");
+    }
   };
 
-  this.printBoard = () => {
+  const printBoard = () => {
     console.log(board);
   };
 
+  const resetBoard = () => {
+    one.innerText = "";
+    two.innerText = "";
+    three.innerText = "";
+    four.innerText = "";
+    five.innerText = "";
+    six.innerText = "";
+    seven.innerText = "";
+    eight.innerText = "";
+    nine.innerText = "";
+
+    for (let index = 0; index < board.length; index++) {
+      board[index] = "";
+    }
+
+    bindEvents();
+  };
+
+  const getBotChoice = (element) => {
+    let space;
+    let botSign = gameHandler.playerTwo.getSign();
+    let isEmpty = false;
+
+    while (!isEmpty) {
+      space = Math.floor(Math.random() * 8);
+      if (board[space] === "") {
+        isEmpty = true;
+        console.log(space);
+        console.log(board[space]);
+        console.log(board);
+      }
+    }
+
+    addToBoard(botSign, space);
+    if (space === 0) one.appendChild(renderSign(botSign));
+    if (space === 1) two.appendChild(renderSign(botSign));
+    if (space === 2) three.appendChild(renderSign(botSign));
+    if (space === 3) four.appendChild(renderSign(botSign));
+    if (space === 4) five.appendChild(renderSign(botSign));
+    if (space === 5) six.appendChild(renderSign(botSign));
+    if (space === 6) seven.appendChild(renderSign(botSign));
+    if (space === 7) eight.appendChild(renderSign(botSign));
+    if (space === 8) nine.appendChild(renderSign(botSign));
+  };
+
   init();
-  return { printBoard };
+  return { printBoard, resetBoard };
 })();
 
-// let firstX = 0;
-// let secondX = 0;
-// let thirdX = 0;
+const gameHandler = (() => {
+  const playerOne = player("player1", "x");
+  const playerTwo = player("player2", "o");
 
-// if (sign === "close") {
-//   firstX = board.indexOf("x");
-//   secondX = board.indexOf("x", 1);
-//   thirdX = board.indexOf("x", 2);
-//   console.log(firstX);
-//   console.log(secondX);
-//   console.log(thirdX);
-// }
+  // Cache DOM
+  const title1 = document.getElementById("player-1-title");
+  const title2 = document.getElementById("player-2-title");
+  const playerInput1 = document.getElementById("player1");
+  const playerInput2 = document.getElementById("player2");
+  const x = document.getElementById("x");
+  const o = document.getElementById("o");
+  const botCheckbox = document.getElementById("botCheckbox");
+  const resetButt = document.getElementById("reset");
 
-// if (
-//   (Math.abs(firstX - secondX) === 1 &&
-//     Math.abs(secondX - Math.abs(thirdX)) === 1) ||
-//   (Math.abs(firstX - secondX) === 4 &&
-//     Math.abs(secondX - Math.abs(thirdX)) === 4) ||
-//   (Math.abs(firstX - secondX) === 3 &&
-//     Math.abs(secondX - Math.abs(thirdX)) === 3)
-// ) {
-//   console.log("X wins!");
-// }
+  const init = () => {
+    bindEvents();
+    setInputs();
+  };
+
+  const bindEvents = () => {
+    playerInput1.addEventListener("input", handleInput);
+    playerInput2.addEventListener("input", handleInput);
+    x.addEventListener("click", selectSign);
+    o.addEventListener("click", selectSign);
+    botCheckbox.addEventListener("change", setInputs);
+    resetButt.addEventListener("click", reset);
+  };
+
+  const handleInput = (event) => {
+    let input = event.target;
+    let inputValue = input.value;
+
+    if (inputValue === "" && input.id === "player1") {
+      playerOne.setName("player1");
+      title1.innerText = "player1";
+    } else if (input.id === "player1") {
+      playerOne.setName(inputValue);
+      title1.innerText = inputValue;
+      return;
+    }
+
+    if (inputValue === "" && input.id === "player2") {
+      playerTwo.setName("player2");
+      title2.innerText = "player2";
+    } else if (input.id === "player2") {
+      playerTwo.setName(inputValue);
+      title2.innerText = inputValue;
+    }
+  };
+
+  const selectSign = (event) => {
+    event.preventDefault();
+    let butt = event.target;
+
+    if (butt.id === "x") {
+      game.resetBoard();
+      playerOne.setSign("x");
+      playerTwo.setSign("o");
+      playerOne.getSign();
+    }
+
+    if (butt.id === "o") {
+      game.resetBoard();
+      playerOne.setSign("o");
+      playerTwo.setSign("x");
+      playerOne.getSign();
+    }
+  };
+
+  const getCheckboxState = () => {
+    if (!botCheckbox.checked) {
+      return false;
+    }
+    return true;
+  };
+
+  const setInputs = () => {
+    if (getCheckboxState()) {
+      game.resetBoard();
+      playerInput2.setAttribute("disabled", "");
+      playerInput2.classList.add("disabled");
+      title2.innerText = "Bot";
+      x.removeAttribute("disabled");
+      x.style.pointerEvents = "all";
+      o.removeAttribute("disabled");
+      o.style.pointerEvents = "all";
+    } else {
+      game.resetBoard();
+      playerInput2.removeAttribute("disabled");
+      playerInput2.classList.remove("disabled");
+      title2.innerText = "Player2";
+      x.setAttribute("disabled", "");
+      x.style.pointerEvents = "none";
+      o.setAttribute("disabled", "");
+      o.style.pointerEvents = "none";
+    }
+  };
+
+  const reset = (event) => {
+    event.preventDefault();
+    game.resetBoard();
+  };
+
+  init();
+  return { playerOne, playerTwo, getCheckboxState };
+})();

@@ -127,6 +127,7 @@ form h1 {
   font-size: 38px;
   background-color: var(--accent);
   color: var(--background);
+  pointer-events: none;
 }
 
 #x {
@@ -153,6 +154,21 @@ form h1 {
   font-size: 18px;
   padding-left: 0.4rem;
   border-radius: 7px;
+}
+
+#reset {
+  cursor: pointer;
+  height: 8%;
+  border: none;
+  background-color: var(--accent);
+  border-radius: 7px;
+  color: var(--background);
+  font-size: 18px;
+  transition: filter cubic-bezier(0.075, 0.82, 0.165, 1) 0.6s;
+}
+
+#reset:hover {
+  filter: brightness(110%);
 }
 
 main {
@@ -185,12 +201,12 @@ main {
   color: var(--background);
 }
 
-#player1 {
+#player-1-title {
   border-right: 2px var(--background) solid;
   border-radius: 7px 0 0 0;
 }
 
-#player2 {
+#player-2-title {
   border-radius: 0 7px 0 0;
 }
 

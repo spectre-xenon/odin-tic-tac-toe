@@ -18,12 +18,12 @@
   </head>
   <body>
     <aside>
-      <form>
+      <form id="form">
         <h1>Game Config</h1>
         <label for="player1" class="coolLabel">
           <input
             type="text"
-            name="player1"
+            id="player1"
             class="coolInput"
             maxlength="8"
             placeholder="&nbsp;"
@@ -33,7 +33,7 @@
         <label for="player2" class="coolLabel">
           <input
             type="text"
-            name="player2"
+            id="player2"
             class="coolInput"
             maxlength="8"
             placeholder="&nbsp;"
@@ -49,22 +49,24 @@
           </button>
         </div>
         <div id="botCheckboxContainer">
-          <input type="checkbox" name="vsBot" id="botCheckbox" checked />
-          <label for="vsBot">Vs Bot?</label>
+          <input type="checkbox" id="botCheckbox" checked />
+          <label for="botCheckbox">Vs Bot?</label>
         </div>
 
         <select name="botDeff" id="botDeff">
-          <option value="placeholder" selected>Bot difficulty</option>
+          <option value="">Bot difficulty</option>
           <option value="normal">Normal (default)</option>
           <option value="impossible">Impossible</option>
         </select>
+
+        <button id="reset">Reset</button>
       </form>
     </aside>
     <main>
       <div id="gameContainer">
         <div id="gameTitle">
-          <h3 id="player1">Player 1</h3>
-          <h3 id="player2">Player 2</h3>
+          <h3 id="player-1-title">Player 1</h3>
+          <h3 id="player-2-title">Player 2</h3>
         </div>
         <div id="gameBoard">
           <div id="one"></div>
