@@ -40,23 +40,15 @@
           />
           <span class="coolEffect">Player 2 Name</span>
         </label>
-        <div id="signSelectionContainer">
-          <button id="x">
-            <span class="material-symbols-rounded"> close </span>
-          </button>
-          <button id="o">
-            <span class="material-symbols-rounded"> circle </span>
-          </button>
-        </div>
+
         <div id="botCheckboxContainer">
           <input type="checkbox" id="botCheckbox" checked />
           <label for="botCheckbox">Vs Bot?</label>
         </div>
 
         <select name="botDeff" id="botDeff">
-          <option value="">Bot difficulty</option>
-          <option value="normal">Normal (default)</option>
-          <option value="impossible">Impossible</option>
+          <option value="normal">Normal Deff(default)</option>
+          <option value="impossible">Impossible Deff</option>
         </select>
 
         <button id="reset">Reset</button>
@@ -81,6 +73,10 @@
         </div>
       </div>
     </main>
+
+    <div id="wonScreen">
+      <h1 id="wonText"></h1>
+    </div>
   </body>
   <script src="app.js"></script>
 </html>

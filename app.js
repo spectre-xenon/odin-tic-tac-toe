@@ -33,6 +33,7 @@ const game = (() => {
   const seven = document.getElementById("seven");
   const eight = document.getElementById("eight");
   const nine = document.getElementById("nine");
+  const wonText = document.getElementById("wonText");
 
   const init = () => {
     bindEvents();
@@ -77,13 +78,12 @@ const game = (() => {
     if (element.innerText === "") {
       addToBoard(sign, index);
       element.appendChild(renderSign(sign));
-
+      checkBoard(sign);
       if (gameHandler.getCheckboxState()) {
         getBotChoice(element);
+        checkBoard(getBotSign());
       }
     }
-
-    checkBoard(sign);
   };
 
   const getIndex = (element) => {
@@ -139,20 +139,12 @@ const game = (() => {
         board[index3] === sign
       ) {
         removeEvents();
-        console.log(`${sign} wins!`);
+        wonText.innerText = `${sign} wins!`;
         gameWon = true;
-        return;
       }
     });
 
-    let boardEmptySpaces = 0;
-    board.forEach((space) => {
-      if (space === "") {
-        boardEmptySpaces++;
-      }
-    });
-
-    if (boardEmptySpaces === 0 && !gameWon) {
+    if (getEmptySpaces() === 0 && !gameWon) {
       removeEvents();
       console.log("it's a draw!");
     }
@@ -172,39 +164,61 @@ const game = (() => {
     seven.innerText = "";
     eight.innerText = "";
     nine.innerText = "";
+    wonText.innerText = "";
 
     for (let index = 0; index < board.length; index++) {
       board[index] = "";
     }
 
+    gameWon = false;
+
     bindEvents();
   };
 
+  const getBotSign = () => {
+    return gameHandler.playerTwo.getSign();
+  };
+
   const getBotChoice = (element) => {
+    if (getEmptySpaces() === 0 || gameWon) return;
+
     let space;
-    let botSign = gameHandler.playerTwo.getSign();
+    let botSign = getBotSign();
     let isEmpty = false;
 
     while (!isEmpty) {
-      space = Math.floor(Math.random() * 8);
+      if (gameHandler.getbotDeff() === "impossible") {
+        // TODO Implement Impossible AI here
+        space = Math.floor(Math.random() * 8);
+      } else {
+        space = Math.floor(Math.random() * 8);
+      }
+
       if (board[space] === "") {
         isEmpty = true;
-        console.log(space);
-        console.log(board[space]);
-        console.log(board);
       }
     }
 
     addToBoard(botSign, space);
     if (space === 0) one.appendChild(renderSign(botSign));
-    if (space === 1) two.appendChild(renderSign(botSign));
-    if (space === 2) three.appendChild(renderSign(botSign));
-    if (space === 3) four.appendChild(renderSign(botSign));
-    if (space === 4) five.appendChild(renderSign(botSign));
-    if (space === 5) six.appendChild(renderSign(botSign));
-    if (space === 6) seven.appendChild(renderSign(botSign));
-    if (space === 7) eight.appendChild(renderSign(botSign));
-    if (space === 8) nine.appendChild(renderSign(botSign));
+    else if (space === 1) two.appendChild(renderSign(botSign));
+    else if (space === 2) three.appendChild(renderSign(botSign));
+    else if (space === 3) four.appendChild(renderSign(botSign));
+    else if (space === 4) five.appendChild(renderSign(botSign));
+    else if (space === 5) six.appendChild(renderSign(botSign));
+    else if (space === 6) seven.appendChild(renderSign(botSign));
+    else if (space === 7) eight.appendChild(renderSign(botSign));
+    else nine.appendChild(renderSign(botSign));
+  };
+
+  const getEmptySpaces = () => {
+    let emptySpaces = 0;
+    for (let index = 0; index < board.length; index++) {
+      if (board[index] === "") {
+        emptySpaces++;
+      }
+    }
+    return emptySpaces;
   };
 
   init();
@@ -220,22 +234,25 @@ const gameHandler = (() => {
   const title2 = document.getElementById("player-2-title");
   const playerInput1 = document.getElementById("player1");
   const playerInput2 = document.getElementById("player2");
-  const x = document.getElementById("x");
-  const o = document.getElementById("o");
+  // const x = document.getElementById("x");
+  // const o = document.getElementById("o");
   const botCheckbox = document.getElementById("botCheckbox");
+  const botDeff = document.getElementById("botDeff");
   const resetButt = document.getElementById("reset");
 
   const init = () => {
     bindEvents();
     setInputs();
+    getbotDeff();
   };
 
   const bindEvents = () => {
     playerInput1.addEventListener("input", handleInput);
     playerInput2.addEventListener("input", handleInput);
-    x.addEventListener("click", selectSign);
-    o.addEventListener("click", selectSign);
+    // x.addEventListener("click", selectSign);
+    // o.addEventListener("click", selectSign);
     botCheckbox.addEventListener("change", setInputs);
+    botDeff.addEventListener("change", reset);
     resetButt.addEventListener("click", reset);
   };
 
@@ -261,24 +278,24 @@ const gameHandler = (() => {
     }
   };
 
-  const selectSign = (event) => {
-    event.preventDefault();
-    let butt = event.target;
+  // const selectSign = (event) => {
+  //   event.preventDefault();
+  //   let butt = event.target;
 
-    if (butt.id === "x") {
-      game.resetBoard();
-      playerOne.setSign("x");
-      playerTwo.setSign("o");
-      playerOne.getSign();
-    }
+  //   if (butt.id === "x") {
+  //     game.resetBoard();
+  //     playerOne.setSign("x");
+  //     playerTwo.setSign("o");
+  //     playerOne.getSign();
+  //   }
 
-    if (butt.id === "o") {
-      game.resetBoard();
-      playerOne.setSign("o");
-      playerTwo.setSign("x");
-      playerOne.getSign();
-    }
-  };
+  //   if (butt.id === "o") {
+  //     game.resetBoard();
+  //     playerOne.setSign("o");
+  //     playerTwo.setSign("x");
+  //     playerOne.getSign();
+  //   }
+  // };
 
   const getCheckboxState = () => {
     if (!botCheckbox.checked) {
@@ -293,20 +310,25 @@ const gameHandler = (() => {
       playerInput2.setAttribute("disabled", "");
       playerInput2.classList.add("disabled");
       title2.innerText = "Bot";
-      x.removeAttribute("disabled");
-      x.style.pointerEvents = "all";
-      o.removeAttribute("disabled");
-      o.style.pointerEvents = "all";
+      // x.removeAttribute("disabled");
+      // x.style.pointerEvents = "all";
+      // o.removeAttribute("disabled");
+      // o.style.pointerEvents = "all";
     } else {
       game.resetBoard();
       playerInput2.removeAttribute("disabled");
       playerInput2.classList.remove("disabled");
       title2.innerText = "Player2";
-      x.setAttribute("disabled", "");
-      x.style.pointerEvents = "none";
-      o.setAttribute("disabled", "");
-      o.style.pointerEvents = "none";
+      // x.setAttribute("disabled", "");
+      // x.style.pointerEvents = "none";
+      // o.setAttribute("disabled", "");
+      // o.style.pointerEvents = "none";
     }
+  };
+
+  const getbotDeff = () => {
+    if (botDeff.value === "impossible") return "impossible";
+    return "normal";
   };
 
   const reset = (event) => {
@@ -315,5 +337,5 @@ const gameHandler = (() => {
   };
 
   init();
-  return { playerOne, playerTwo, getCheckboxState };
+  return { playerOne, playerTwo, getCheckboxState, botDeff, getbotDeff };
 })();

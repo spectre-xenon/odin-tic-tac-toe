@@ -272,3 +272,21 @@ main {
 #gameBoard #nine {
   border-left-width: var(--borderWidth);
 }
+
+#wonScreen {
+  position: absolute;
+  height: 100dvh;
+  width: 8vw;
+  left: 88vw;
+}
+
+#wonScreen h1 {
+  height: 100%;
+  background: transparent;
+  font-size: 46px;
+  line-height: 10rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
