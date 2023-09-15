@@ -78,10 +78,10 @@ const game = (() => {
     if (element.innerText === "") {
       addToBoard(sign, index);
       element.appendChild(renderSign(sign));
-      checkBoard(sign);
+      isWinBoard(board);
       if (gameHandler.getCheckboxState()) {
         getBotChoice(element);
-        checkBoard(getBotSign());
+        isWinBoard(board);
       }
     }
   };
@@ -116,7 +116,7 @@ const game = (() => {
     return span;
   };
 
-  const checkBoard = (sign) => {
+  const checkBoard = (board) => {
     let winCombinations = [
       [0, 1, 2],
       [3, 4, 5],
@@ -128,25 +128,45 @@ const game = (() => {
       [2, 5, 8],
     ];
 
+    let isWon = false;
+    let wonSign = "";
+
     winCombinations.forEach((combination) => {
       let index1 = combination[0];
       let index2 = combination[1];
       let index3 = combination[2];
 
       if (
-        board[index1] === sign &&
-        board[index2] === sign &&
-        board[index3] === sign
+        board[index1] === board[index2] &&
+        board[index2] === board[index3] &&
+        board[index1] !== ""
       ) {
-        removeEvents();
-        wonText.innerText = `${sign} wins!`;
-        gameWon = true;
+        wonSign = board[index1];
+        isWon = true;
       }
     });
 
-    if (getEmptySpaces() === 0 && !gameWon) {
+    if (isWon) {
+      return wonSign;
+    } else if (getEmptySpaces() === 0 && !gameWon) {
+      return "tie";
+    } else {
+      return null;
+    }
+  };
+
+  const isWinBoard = (board) => {
+    console.log(checkBoard(board));
+    if (checkBoard(board) === "tie") {
       removeEvents();
-      console.log("it's a draw!");
+      wonText.innerText = "It's a tie";
+    } else if (
+      checkBoard(board) !== null &&
+      (checkBoard(board) === "x" || checkBoard(board) === "o")
+    ) {
+      removeEvents();
+      wonText.innerText = `${checkBoard(board)} wins!`;
+      gameWon = true;
     }
   };
 
@@ -186,16 +206,27 @@ const game = (() => {
     let botSign = getBotSign();
     let isEmpty = false;
 
-    while (!isEmpty) {
-      if (gameHandler.getbotDeff() === "impossible") {
-        // TODO Implement Impossible AI here
-        space = Math.floor(Math.random() * 8);
-      } else {
-        space = Math.floor(Math.random() * 8);
-      }
+    let bestScore = -Infinity;
 
-      if (board[space] === "") {
-        isEmpty = true;
+    if (gameHandler.getbotDeff() === "impossible") {
+      // TODO Implement Impossible AI here
+      for (let index = 0; index < board.length; index++) {
+        if (board[index] === "") {
+          board[index] = "o";
+          let score = miniMax(board, 0, false);
+          board[index] = "";
+          if (score > bestScore) {
+            bestScore = score;
+            space = index;
+          }
+        }
+      }
+    } else {
+      while (!isEmpty) {
+        space = Math.floor(Math.random() * 8);
+        if (board[space] === "") {
+          isEmpty = true;
+        }
       }
     }
 
@@ -211,6 +242,47 @@ const game = (() => {
     else nine.appendChild(renderSign(botSign));
   };
 
+  let scores = {
+    x: -10,
+    o: 10,
+    tie: 0,
+  };
+
+  const miniMax = (board, depth, isMaximizing) => {
+    let result = checkBoard(board);
+    if (result !== null) {
+      return scores[result];
+    }
+
+    if (!isMaximizing) {
+      let bestScore = Infinity;
+      for (let index = 0; index < board.length; index++) {
+        if (board[index] === "") {
+          board[index] = "x";
+          let score = miniMax(board, depth + 1, true);
+          board[index] = "";
+          if (score < bestScore) {
+            bestScore = score;
+          }
+        }
+      }
+      return bestScore;
+    } else {
+      let bestScore = -Infinity;
+      for (let index = 0; index < board.length; index++) {
+        if (board[index] === "") {
+          board[index] = "o";
+          let score = miniMax(board, depth + 1, false);
+          board[index] = "";
+          if (score > bestScore) {
+            bestScore = score;
+          }
+        }
+      }
+      return bestScore;
+    }
+  };
+
   const getEmptySpaces = () => {
     let emptySpaces = 0;
     for (let index = 0; index < board.length; index++) {
@@ -222,7 +294,7 @@ const game = (() => {
   };
 
   init();
-  return { printBoard, resetBoard };
+  return { scores, printBoard, resetBoard };
 })();
 
 const gameHandler = (() => {
