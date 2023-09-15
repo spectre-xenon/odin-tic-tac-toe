@@ -191,6 +191,7 @@ const game = (() => {
     }
 
     gameWon = false;
+    player1Turn = true;
 
     bindEvents();
   };
